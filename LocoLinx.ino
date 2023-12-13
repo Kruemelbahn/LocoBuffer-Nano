@@ -6,19 +6,26 @@
 // is provided via the RS232 Clear-To-Send (CTS) pin. When the Serial receive
 // buffer is less than RX_BUF_LOW then the 
 
+// ZIM 2021-10-11 modified for speed selection, Tx-Pin changed
+
+#define  IN_SPEED_SELECTION  3	// low = 19200Bd, High = 57600Bd (default)
+
 #define  RX_CTS_PIN   9
 #define  RX_BUF_LOW   32 
 #define  RX_BUF_HIGH  96
 
-#define  TX_PIN   6
+#define  TX_PIN   7
 
 static   LnBuf        LnTxBuffer ;
 static   lnMsg        *LnPacket;
 
 void setup()
 {
-    // Configure the serial port for 57600 baud
-  Serial.begin(57600);
+	pinMode(IN_SPEED_SELECTION, INPUT_PULLUP);
+	boolean bSelection57600(digitalRead(IN_SPEED_SELECTION) == HIGH);
+
+    // Configure the serial port for 19200/57600 baud
+  Serial.begin(bSelection57600? 57600 : 19200);
   
     // First initialize the LocoNet interface, specifying the TX Pin
   LocoNet.init(TX_PIN);
